@@ -1,0 +1,8 @@
+POST http://localhost:8000/elo
+Content-Type: application/json
+
+{
+    "player1_username": "player1",
+    "player2_username": "player2",
+    "winner": "player1"
+}
