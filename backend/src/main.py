@@ -1,24 +1,23 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# import supabase
-from supabase import create_client, Client
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
+# import functions from our supabase module
+from lib.supabase import (
+    get_all_users,
+    get_all_matches,
+    get_user_by_username,
+    create_user,
+    update_user_elo,
+    record_match
+)
 
 # import elo_calculator
 from elo_calculator import calculate_elo
 
-url: str = os.getenv("SUPABASE_URL")
-key: str = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
-
 app = FastAPI()
 
 
-class Match_post(BaseModel):
+class MatchPost(BaseModel):
     player1_username: str
     player2_username: str
     winner: str
@@ -31,50 +30,32 @@ async def root():
 
 @app.get("/users")
 async def get_users():
-    users = supabase.table("users").select("*").execute()
-    return users.data
+    users = get_all_users()
+    return users
 
 
 @app.get("/matches")
 async def get_matches():
-    matches = supabase.table("matches").select("*").execute()
-    return matches.data
+    matches = get_all_matches()
+    return matches
 
 
 @app.post("/elo")
-async def process_elo(match_data: Match_post):
+async def process_elo(match_data: MatchPost):
     player1_username = match_data.player1_username
     player2_username = match_data.player2_username
     winner = match_data.winner
 
     # check if user exists, if not create user
-    player1 = (
-        supabase.table("users").select("*").eq("username", player1_username).execute()
-    )
+    player1 = get_user_by_username(player1_username)
     if player1.data == []:
-        supabase.table("users").insert(
-            {"username": player1_username, "elo": 1400}
-        ).execute()
-        player1 = (
-            supabase.table("users")
-            .select("*")
-            .eq("username", player1_username)
-            .execute()
-        )
+        create_user(player1_username)
+        player1 = get_user_by_username(player1_username)
 
-    player2 = (
-        supabase.table("users").select("*").eq("username", player2_username).execute()
-    )
+    player2 = get_user_by_username(player2_username)
     if player2.data == []:
-        supabase.table("users").insert(
-            {"username": player2_username, "elo": 1400}
-        ).execute()
-        player2 = (
-            supabase.table("users")
-            .select("*")
-            .eq("username", player2_username)
-            .execute()
-        )
+        create_user(player2_username)
+        player2 = get_user_by_username(player2_username)
 
     # check that winners are not the same
     if player1_username == player2_username:
@@ -88,21 +69,11 @@ async def process_elo(match_data: Match_post):
     )
 
     # update elo in database
-    supabase.table("users").update({"elo": int(new_player1_elo)}).eq(
-        "username", player1_username
-    ).execute()
-    supabase.table("users").update({"elo": int(new_player2_elo)}).eq(
-        "username", player2_username
-    ).execute()
+    update_user_elo(player1_username, new_player1_elo)
+    update_user_elo(player2_username, new_player2_elo)
 
     # record match
-    supabase.table("matches").insert(
-        {
-            "player1_username": player1_username,
-            "player2_username": player2_username,
-            "winner_username": winner,
-        }
-    ).execute()
+    record_match(player1_username, player2_username, winner)
 
     return {
         "player1_username": player1_username,
