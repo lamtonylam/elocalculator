@@ -42,9 +42,10 @@ async def get_matches():
 
 @app.post("/elo")
 async def process_elo(match_data: MatchPost):
-    player1_username = match_data.player1_username
-    player2_username = match_data.player2_username
-    winner = match_data.winner
+    # normalize usernames to lowercase
+    player1_username = match_data.player1_username.lower()
+    player2_username = match_data.player2_username.lower()
+    winner = match_data.winner.lower()
 
     # check if user exists, if not create user
     player1 = get_user_by_username(player1_username)
