@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 # import functions from our supabase module
 from lib.supabase import (
@@ -8,13 +9,20 @@ from lib.supabase import (
     get_user_by_username,
     create_user,
     update_user_elo,
-    record_match
+    record_match,
 )
 
 # import elo_calculator
 from elo_calculator import calculate_elo
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class MatchPost(BaseModel):

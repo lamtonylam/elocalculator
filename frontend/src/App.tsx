@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import './App.css';
 
+import { record_match } from './lib/matchService';
+
 function App() {
   const [player1username, setPlayer1Username] = useState('');
   const [player2username, setPlayer2Username] = useState('');
   const [winner, setWinner] = useState('');
+  const [error, setError] = useState('');
 
   const handlePlayer1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPlayer1Username(e.target.value);
@@ -18,11 +21,43 @@ function App() {
     setWinner(e.target.value);
   };
 
+  const validateForm = () => {
+    if (!player1username || !player2username) {
+      setError('Both player names are required');
+      return false;
+    }
+
+    if (player1username === player2username) {
+      setError('Players must have different names');
+      return false;
+    }
+
+    if (!winner) {
+      setError('Please select a winner');
+      return false;
+    }
+
+    setError('');
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Player 1:', player1username);
-    console.log('Player 2:', player2username);
-    console.log('Winner:', winner);
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const matchData = {
+      player1_username: player1username,
+      player2_username: player2username,
+      winner: winner,
+    };
+    record_match(matchData);
+
+    setPlayer1Username('');
+    setPlayer2Username('');
+    setWinner('');
   };
 
   return (
@@ -31,6 +66,7 @@ function App() {
 
       <div className="match-form">
         <h2>Record a Match</h2>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="player1">
@@ -68,6 +104,7 @@ function App() {
                   value={player1username}
                   checked={winner === player1username}
                   onChange={handleWinnerChange}
+                  disabled={!player1username}
                 />
                 {player1username ? player1username : 'Player 1'}
               </label>
@@ -78,6 +115,7 @@ function App() {
                   value={player2username}
                   checked={winner === player2username}
                   onChange={handleWinnerChange}
+                  disabled={!player2username}
                 />
                 {player2username ? player2username : 'Player 2'}
               </label>
