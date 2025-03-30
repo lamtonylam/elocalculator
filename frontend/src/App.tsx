@@ -1,35 +1,96 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [player1username, setPlayer1Username] = useState('');
+  const [player2username, setPlayer2Username] = useState('');
+  const [winner, setWinner] = useState('');
+
+  const handlePlayer1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPlayer1Username(e.target.value);
+  };
+
+  const handlePlayer2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPlayer2Username(e.target.value);
+  };
+
+  const handleWinnerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWinner(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Player 1:', player1username);
+    console.log('Player 2:', player2username);
+    console.log('Winner:', winner);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="elo-app">
+      <h1>Elo Ranking App</h1>
+
+      <div className="match-form">
+        <h2>Record a Match</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="player1">
+              Player 1 Username:
+              <input
+                id="player1"
+                type="text"
+                name="player1"
+                value={player1username}
+                onChange={handlePlayer1Change}
+              />
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="player2">
+              Player 2 Username:
+              <input
+                id="player2"
+                type="text"
+                name="player2"
+                value={player2username}
+                onChange={handlePlayer2Change}
+              />
+            </label>
+          </div>
+
+          <div className="form-group">
+            <p>Winner:</p>
+            <div className="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="winner"
+                  value={player1username}
+                  checked={winner === player1username}
+                  onChange={handleWinnerChange}
+                />
+                {player1username ? player1username : 'Player 1'}
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="winner"
+                  value={player2username}
+                  checked={winner === player2username}
+                  onChange={handleWinnerChange}
+                />
+                {player2username ? player2username : 'Player 2'}
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" className="submit-button">
+            Submit
+          </button>
+        </form>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
