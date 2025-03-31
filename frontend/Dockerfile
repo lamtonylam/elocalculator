@@ -1,31 +1,20 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Use the latest Node.js image based on Alpine Linux from the official Docker Hub repository
+FROM node:alpine
 
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/app
 
-# Copy package.json and package-lock.json
+# Copy both files to the working directory
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies using npm ci
+RUN npm ci
 
-# Copy the rest of the application code
+# Copy all files from the current directory to the working directory
 COPY . .
 
-# Build the application
-RUN npm run build
-
-# Runtime stage
-FROM nginx:alpine
-
-# Copy built assets from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Add nginx configuration if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 5173
+# Expose port 5173 to allow external access
 EXPOSE 5173
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Define the command to run the application
+CMD ["npm", "start"]
