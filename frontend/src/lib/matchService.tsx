@@ -15,3 +15,14 @@ export const record_match = async (matchData: {
     throw error;
   }
 };
+
+export const get_players = async () => {
+  try {
+    const response = await axios.get(`${backendUrl}/users`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching players:', error);
+    throw error;
+  }
+};
