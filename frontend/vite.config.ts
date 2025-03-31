@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: ['localhost', '127.0.0.1', '*.ynot.fi'],
+    allowedHosts: ['localhost', '127.0.0.1', '*.ynot.fi', 'eloranking.ynot.fi'],
   },
 });
