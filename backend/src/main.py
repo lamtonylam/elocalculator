@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 
 # import models
-from models import MatchPost
+from models import Match, User, MatchPost
 
 # import functions from our supabase module
 from lib.supabase import (
@@ -33,13 +34,13 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/users")
+@app.get("/users", response_model=List[User])
 async def get_users():
     users = get_all_users()
     return users
 
 
-@app.get("/matches")
+@app.get("/matches", response_model=List[Match])
 async def get_matches():
     matches = get_all_matches()
     return matches
