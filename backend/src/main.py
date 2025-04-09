@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
+# import models
+from models import MatchPost
+
 # import functions from our supabase module
 from lib.supabase import (
     get_all_users,
@@ -23,12 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-class MatchPost(BaseModel):
-    player1_username: str
-    player2_username: str
-    winner: str
 
 
 @app.get("/")
