@@ -7,7 +7,7 @@ interface MatchData {
   winner: string;
 }
 
-function MatchForm() {
+function MatchForm({ fetchPlayers }: { fetchPlayers: () => void }) {
   const [player1username, setPlayer1Username] = useState('');
   const [player2username, setPlayer2Username] = useState('');
   const [winner, setWinner] = useState('');
@@ -62,6 +62,8 @@ function MatchForm() {
     setPlayer1Username('');
     setPlayer2Username('');
     setWinner('');
+
+    fetchPlayers();
   };
 
   return (

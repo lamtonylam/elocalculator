@@ -1,28 +1,6 @@
-import { useState, useEffect } from 'react';
-import { get_players } from '../lib/matchService';
+import { Player } from '../lib/types';
 
-function PlayerTable() {
-  interface Player {
-    id: number;
-    username: string;
-    elo: number;
-  }
-
-  const [players, setPlayers] = useState<Player[]>([]);
-
-  const fetchPlayers = async () => {
-    try {
-      const playersData = await get_players();
-      setPlayers(Array.isArray(playersData) ? playersData : []);
-    } catch (error) {
-      console.error('Error fetching players:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPlayers();
-  }, []);
-
+function PlayerTable({ players }: { players: Player[] }) {
   return (
     <div>
       <table>
