@@ -45,7 +45,7 @@ function MatchForm({ fetchPlayers }: { fetchPlayers: () => void }) {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -57,7 +57,7 @@ function MatchForm({ fetchPlayers }: { fetchPlayers: () => void }) {
       player2_username: player2username,
       winner: winner,
     };
-    record_match(matchData);
+    await record_match(matchData);
 
     setPlayer1Username('');
     setPlayer2Username('');
